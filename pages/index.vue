@@ -1,5 +1,51 @@
 <template>
-  <div className="thebody">
+  import * as React from "react";
+import "../utils/UserAccount.css";
+import Image from "react-bootstrap/Image";
+import { nameProps } from "../utils/types";
+import { useEffect, useState, useContext } from "react";
+import { userContext } from "../utils/userContext";
+import { useParams } from "react-router";
+
+const UserAccount = () => {
+  const { propsObj, setPropsObj } = useContext(userContext);
+  const { username } = useParams<{ username: string }>();
+  const [profileObject, setProfileObject] = useState({
+    userid: null,
+    username: username,
+    profileName: "",
+    profileLocation: "",
+    profileBio: "",
+    profileType: "",
+    profilePhoto: "",
+    popularity: "",
+    tag1: "",
+    tag2: "",
+    tag3: "",
+  });
+
+  const getProfile = async () => {
+    try {
+      const res = await fetch(`/api/users/${username}`);
+      const info = await res.json();
+      setProfileObject(info);
+      console.log(info);
+      console.log(profileObject);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  return (
+    <>
+      <div className="thebody">
       <div className="container">
 <div className="row gutters">
 <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
@@ -8,13 +54,13 @@
 		<div className="account-settings">
 			<div className="user-profile">
 				<div className="user-avatar">
-					<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin"></img>
+					<img src={profileObject.profilePhoto} alt="Maxwell Admin"></img>
 				</div>
-				<h5 className="user-name">Yuki Hayashi</h5>
-				<h6 className="user-email">yuki@Maxwell.com</h6>
+				<h5 className="user-name">{profileObject.username}</h5>
+				<h6 className="user-type">{profileObject.profileType}</h6>
 			</div>
 			<div className="about">
-				<h5>About</h5>
+				<h5><i>Performance</i> Bio</h5>
 				<p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
 			</div>
 		</div>
@@ -96,4 +142,14 @@
 </div>
 </div>
 </div>
+
+
+
+
+    </>
+  );
+};
+
+export default UserAccount;
+
 </template>
